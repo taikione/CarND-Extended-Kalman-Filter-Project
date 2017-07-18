@@ -81,12 +81,12 @@ int main()
       	  		meas_package.sensor_type_ = MeasurementPackage::RADAR;
           		meas_package.raw_measurements_ = VectorXd(3);
           		float ro;
-      	  		float theta;
+      	  		float phi;
       	  		float ro_dot;
           		iss >> ro;
-          		iss >> theta;
+          		iss >> phi;
           		iss >> ro_dot;
-          		meas_package.raw_measurements_ << ro,theta, ro_dot;
+          		meas_package.raw_measurements_ << ro, phi, ro_dot;
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
           }
@@ -106,7 +106,7 @@ int main()
     	  ground_truth.push_back(gt_values);
           
           //Call ProcessMeasurment(meas_package) for Kalman filter
-    	  fusionEKF.ProcessMeasurement(meas_package);    	  
+    	  fusionEKF.ProcessMeasurement(meas_package);
 
     	  //Push the current estimated x,y positon from the Kalman filter's state vector
 
