@@ -23,13 +23,13 @@ FusionEKF::FusionEKF() {
   Hj_ = MatrixXd(3, 4);
 
   //measurement covariance matrix - laser
-  R_laser_ << 0.0225, 0,
-              0, 0.0225;
+  R_laser_ << 0.001, 0,
+              0, 0.001;
 
   //measurement covariance matrix - radar
-  R_radar_ << 0.09, 0, 0,
-              0, 0.0009, 0,
-              0, 0, 0.09;
+  R_radar_ << 1, 0, 0,
+              0, 1, 0,
+              0, 0, 30;
 
   /**
   TODO:
@@ -52,8 +52,8 @@ FusionEKF::FusionEKF() {
              0, 0, 1, 0,
              0, 0, 0, 1;
 
-  noise_ax = 9.0;
-  noise_ay = 9.0;
+  noise_ax = 2.5;
+  noise_ay = 2.5;
 }
 
 /**
@@ -83,10 +83,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
-      // px = ro * cos(phi)
-      float px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
-      // py = ro * sin(phi)
-      float py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
+      float py = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
+      float px = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
 
       ekf_.x_ << px, py, 0, 0;
     }
@@ -124,10 +122,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float dt_4 = dt_3 * dt;
 
   ekf_.Q_ = MatrixXd(4, 4);
-  ekf_.Q_ <<  dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
-              0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
-              dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
-              0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
+  ekf_.Q_ << dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
+             0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
+             dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
+             0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
 
   ekf_.Predict();
 
@@ -154,6 +152,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   }
 
   // print the output
+  cout << "TYPE :  " << measurement_pack.sensor_type_ << endl;
   cout << "x_ = " << ekf_.x_ << endl;
   cout << "P_ = " << ekf_.P_ << endl;
 }
