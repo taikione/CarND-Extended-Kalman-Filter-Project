@@ -23,13 +23,13 @@ FusionEKF::FusionEKF() {
   Hj_ = MatrixXd(3, 4);
 
   //measurement covariance matrix - laser
-  R_laser_ << 0.001, 0,
-              0, 0.001;
+  R_laser_ << 0.0225, 0,
+              0, 0.0225;
 
   //measurement covariance matrix - radar
-  R_radar_ << 1, 0, 0,
-              0, 1, 0,
-              0, 0, 30;
+  R_radar_ << 0.09, 0, 0,
+              0, 0.0009, 0,
+              0, 0, 0.09;
 
   /**
   TODO:
@@ -52,8 +52,8 @@ FusionEKF::FusionEKF() {
              0, 0, 1, 0,
              0, 0, 0, 1;
 
-  noise_ax = 2.5;
-  noise_ay = 2.5;
+  noise_ax = 5;
+  noise_ay = 5;
 }
 
 /**
@@ -83,8 +83,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
-      float py = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
-      float px = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
+      float px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
+      float py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
 
       ekf_.x_ << px, py, 0, 0;
     }
